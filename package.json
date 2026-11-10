@@ -1,0 +1,10 @@
+{
+  "name": "task-todo-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix Task_Todo run dev",
+    "build": "npm --prefix Task_Todo run build",
+    "preview": "npm --prefix Task_Todo run preview"
+  }
+}
