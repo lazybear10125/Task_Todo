@@ -100,18 +100,40 @@ export default function App() {
     [groups],
   );
 
+  const [editingTask, setEditingTask] = useState(null);
+
   function handleOpenModal(groupId) {
+    setEditingTask(null);
     setSelectedGroupId(groupId || groups[0]?.id || "todo");
     setIsModalOpen(true);
   }
 
   function handleCloseModal() {
     setIsModalOpen(false);
+    setEditingTask(null);
+  }
+
+  function handleOpenEditModal(task) {
+    setEditingTask(task);
+    setSelectedGroupId(task.groupId || task.status);
+    setIsModalOpen(true);
   }
 
   function handleAddTask(newTask) {
+    const taskToAdd = {
+      ...newTask,
+      id: newTask.id || Date.now().toString(),
+    };
     setTasks(function (prev) {
-      return [...prev, newTask];
+      return [...prev, taskToAdd];
+    });
+  }
+
+  function handleUpdateTask(updatedTask) {
+    setTasks(function (prev) {
+      return prev.map(function (item) {
+        return item.id === updatedTask.id ? updatedTask : item;
+      });
     });
   }
 
@@ -159,7 +181,6 @@ export default function App() {
     });
     setNewGroupTitle("");
   }
-
   return (
     <div className="app-container">
       <header className="app-header">
@@ -205,18 +226,22 @@ export default function App() {
           onOpenAddTask={handleOpenModal}
           onAddTask={handleOpenModal}
           onDeleteTask={handleDeleteTask}
+          onEditTask={handleOpenEditModal}
+          onClose={handleCloseModal}
         />
       </main>
 
       {isModalOpen && (
         <TaskModalContainer
-          key={selectedGroupId}
+          key={editingTask ? editingTask.id : selectedGroupId}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           closeModal={handleCloseModal}
           groups={groups}
+          taskToEdit={editingTask}
           defaultGroupId={selectedGroupId}
           onAddTask={handleAddTask}
+          onUpdateTask={handleUpdateTask}
         />
       )}
     </div>

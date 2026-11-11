@@ -8,6 +8,7 @@ export default function TaskList({
   onStatusChange,
   onAddTask,
   onDeleteTask,
+  onEditTask,
 }) {
   const handleStatusChange = onStatusChange || changeStatus;
 
@@ -58,6 +59,17 @@ export default function TaskList({
                         <h4 className="task-title">{task.title}</h4>
                         {onDeleteTask && (
                           <div className="task-actions">
+                            <button
+                              type="button"
+                              className="edit-button"
+                              onClick={function () {
+                                if (onEditTask) {
+                                  onEditTask(task);
+                                }
+                              }}
+                            >
+                              Change
+                            </button>
                             <button
                               type="button"
                               className="delete-button"

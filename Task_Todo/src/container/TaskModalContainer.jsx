@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { taskSchema } from "../schema/taskSchema";
 import TaskModal from "../components/TaskModal";
 
 export default function TaskModalContainer({
@@ -7,81 +10,83 @@ export default function TaskModalContainer({
   closeModal,
   groups = [],
   defaultGroupId,
+  taskToEdit = null,
   onAddTask,
+  onUpdateTask,
 }) {
   const handleCloseCallback = onClose || closeModal;
+  const isEditMode = Boolean(taskToEdit);
 
-  const [formData, setFormData] = useState(function () {
-    return {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(taskSchema),
+    defaultValues: {
       title: "",
       description: "",
       status: defaultGroupId || (groups[0]?.id ?? "todo"),
-    };
+    },
   });
 
-  const [errors, setErrors] = useState({});
+  useEffect(
+    function () {
+      if (isOpen) {
+        if (taskToEdit) {
+          reset({
+            title: taskToEdit.title || "",
+            description: taskToEdit.description || "",
+            status: taskToEdit.groupId || taskToEdit.status || defaultGroupId || "todo",
+          });
+        } else {
+          reset({
+            title: "",
+            description: "",
+            status: defaultGroupId || (groups[0]?.id ?? "todo"),
+          });
+        }
+      }
+    },
+    [isOpen, taskToEdit, defaultGroupId, groups, reset],
+  );
 
   if (!isOpen) {
     return null;
   }
 
   function handleClose() {
-    setFormData({
+    reset({
       title: "",
       description: "",
       status: defaultGroupId || (groups[0]?.id ?? "todo"),
     });
-    setErrors({});
     if (handleCloseCallback) {
       handleCloseCallback();
     }
   }
 
-  function handleChange(event) {
-    const { name, value } = event.target;
-    setFormData(function (prev) {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
-
-    if (errors[name]) {
-      setErrors(function (prev) {
-        return {
-          ...prev,
-          [name]: "",
-        };
-      });
-    }
-  }
-
-  function handleSubmit(event) {
-    event.preventDefault();
-
-    const newErrors = {};
-    if (!formData.title.trim()) {
-      newErrors.title = "Tiêu đề không được để trống";
-    }
-    if (!formData.description.trim()) {
-      newErrors.description = "Mô tả không được để trống";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    const newTask = {
-      id: Date.now().toString(),
-      title: formData.title.trim(),
-      description: formData.description.trim(),
-      status: formData.status,
-      groupId: formData.status,
-    };
-
-    if (onAddTask) {
-      onAddTask(newTask);
+  function handleFormSubmit(data) {
+    if (isEditMode) {
+      if (onUpdateTask) {
+        onUpdateTask({
+          ...taskToEdit,
+          title: data.title.trim(),
+          description: data.description.trim(),
+          status: data.status,
+          groupId: data.status,
+        });
+      }
+    } else {
+      if (onAddTask) {
+        onAddTask({
+          title: data.title.trim(),
+          description: data.description.trim(),
+          status: data.status,
+          groupId: data.status,
+        });
+      }
     }
     handleClose();
   }
@@ -90,10 +95,10 @@ export default function TaskModalContainer({
     <TaskModal
       isOpen={isOpen}
       groups={groups}
-      formData={formData}
+      register={register}
       errors={errors}
-      onChange={handleChange}
-      onSubmit={handleSubmit}
+      isEditMode={isEditMode}
+      onSubmit={handleSubmit(handleFormSubmit)}
       onClose={handleClose}
       closeModal={handleClose}
     />

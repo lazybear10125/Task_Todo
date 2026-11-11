@@ -8,6 +8,7 @@ export default function TaskListContainer({
   onOpenAddTask,
   onAddTask,
   onDeleteTask,
+  onEditTask,
 }) {
   const handleStatusChange = onStatusChange || changeStatus;
   const handleAddTask = onOpenAddTask || onAddTask;
@@ -35,6 +36,7 @@ export default function TaskListContainer({
       changeStatus={handleStatusChange}
       onAddTask={handleAddTask}
       onDeleteTask={onDeleteTask}
+      onEditTask={onEditTask}
     />
   );
 }

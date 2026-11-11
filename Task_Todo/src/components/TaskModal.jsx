@@ -3,9 +3,9 @@ import "./ui/TaskModal.css";
 export default function TaskModal({
   isOpen,
   groups = [],
-  formData = { title: "", description: "", status: "" },
+  register,
   errors = {},
-  onChange,
+  isEditMode = false,
   onSubmit,
   onClose,
   closeModal,
@@ -25,7 +25,9 @@ export default function TaskModal({
         }}
       >
         <div className="modal-header">
-          <h2 className="modal-title">Thêm Công Việc Mới</h2>
+          <h2 className="modal-title">
+            {isEditMode ? "Chỉnh Sửa Công Việc" : "Thêm Công Việc Mới"}
+          </h2>
           <button type="button" className="close-button" onClick={handleClose}>
             ✕
           </button>
@@ -38,15 +40,13 @@ export default function TaskModal({
             </label>
             <input
               id="task-title"
-              name="title"
               type="text"
               className="form-input"
               placeholder="Nhập tiêu đề công việc..."
-              value={formData.title || ""}
-              onChange={onChange}
+              {...(register ? register("title") : {})}
             />
             {errors.title && (
-              <p className="error-message">{errors.title}</p>
+              <p className="error-message">{errors.title.message || errors.title}</p>
             )}
           </div>
 
@@ -56,15 +56,15 @@ export default function TaskModal({
             </label>
             <textarea
               id="task-description"
-              name="description"
               rows="4"
               className="form-textarea"
               placeholder="Nhập mô tả chi tiết công việc..."
-              value={formData.description || ""}
-              onChange={onChange}
+              {...(register ? register("description") : {})}
             />
             {errors.description && (
-              <p className="error-message">{errors.description}</p>
+              <p className="error-message">
+                {errors.description.message || errors.description}
+              </p>
             )}
           </div>
 
@@ -74,10 +74,8 @@ export default function TaskModal({
             </label>
             <select
               id="task-status"
-              name="status"
               className="form-select"
-              value={formData.status || ""}
-              onChange={onChange}
+              {...(register ? register("status") : {})}
             >
               {groups.map(function (group) {
                 return (
@@ -98,7 +96,7 @@ export default function TaskModal({
               Hủy
             </button>
             <button type="submit" className="submit-button">
-              Lưu
+              {isEditMode ? "Cập Nhật" : "Lưu"}
             </button>
           </div>
         </form>
