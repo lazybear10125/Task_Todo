@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import TaskList from "./components/TaskList";
+import TaskListContainer from "./container/TaskListContainer";
+import TaskModalContainer from "./container/TaskModalContainer";
 import "./App.css";
 
 const DEFAULT_GROUPS = [
@@ -33,6 +34,23 @@ const INITIAL_TASKS = [
 ];
 
 export default function App() {
+  const [groups, setGroups] = useState(function () {
+    const savedGroups = localStorage.getItem("todo_groups");
+    if (savedGroups) {
+      try {
+        const parsed = JSON.parse(savedGroups);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    return DEFAULT_GROUPS;
+  });
+
+  const [newGroupTitle, setNewGroupTitle] = useState("");
+
   const [tasks, setTasks] = useState(function () {
     const savedTasks = localStorage.getItem("todo_tasks");
     if (savedTasks) {
@@ -65,24 +83,81 @@ export default function App() {
     return INITIAL_TASKS;
   });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedGroupId, setSelectedGroupId] = useState("todo");
+
   useEffect(
     function () {
       localStorage.setItem("todo_tasks", JSON.stringify(tasks));
     },
-    [tasks]
+    [tasks],
   );
 
-  function changeStatus(taskId, newStatus) {
+  useEffect(
+    function () {
+      localStorage.setItem("todo_groups", JSON.stringify(groups));
+    },
+    [groups],
+  );
+
+  function handleOpenModal(groupId) {
+    setSelectedGroupId(groupId || groups[0]?.id || "todo");
+    setIsModalOpen(true);
+  }
+
+  function handleCloseModal() {
+    setIsModalOpen(false);
+  }
+
+  function handleAddTask(newTask) {
+    setTasks(function (prev) {
+      return [...prev, newTask];
+    });
+  }
+
+  function handleChangeStatus(taskId, newStatus) {
     const updatedTasks = tasks.map(function (task) {
       if (task.id === taskId) {
         return {
           ...task,
           status: newStatus,
+          groupId: newStatus,
         };
       }
       return task;
     });
     setTasks(updatedTasks);
+  }
+
+  function handleDeleteTask(taskId) {
+    setTasks(function (prev) {
+      return prev.filter(function (task) {
+        return task.id !== taskId;
+      });
+    });
+  }
+
+  function handleAddGroup(event) {
+    event.preventDefault();
+    const trimmed = newGroupTitle.trim();
+    if (!trimmed) return;
+
+    const id = trimmed.toLowerCase().replace(/\s+/g, "-");
+    const finalId = groups.some(function (g) {
+      return g.id === id;
+    })
+      ? `${id}-${Date.now()}`
+      : id;
+
+    const newGroup = {
+      id: finalId,
+      title: trimmed,
+    };
+
+    setGroups(function (prev) {
+      return [...prev, newGroup];
+    });
+    setNewGroupTitle("");
   }
 
   return (
@@ -94,30 +169,56 @@ export default function App() {
         </div>
 
         <div className="header-actions">
-          <div className="add-group-form">
+          <form className="add-group-form" onSubmit={handleAddGroup}>
             <input
               type="text"
               placeholder="Nhap ten group moi..."
               className="group-input"
+              value={newGroupTitle}
+              onChange={function (e) {
+                setNewGroupTitle(e.target.value);
+              }}
             />
-            <button type="button" className="add-group-button">
+            <button type="submit" className="add-group-button">
               + Add Group
             </button>
-          </div>
+          </form>
 
-          <button type="button" className="add-task-button">
+          <button
+            type="button"
+            className="add-task-button"
+            onClick={function () {
+              handleOpenModal(groups[0]?.id || "todo");
+            }}
+          >
             + Add Task
           </button>
         </div>
       </header>
 
       <main className="app-main">
-        <TaskList
-          groups={DEFAULT_GROUPS}
+        <TaskListContainer
+          groups={groups}
           tasks={tasks}
-          changeStatus={changeStatus}
+          changeStatus={handleChangeStatus}
+          onStatusChange={handleChangeStatus}
+          onOpenAddTask={handleOpenModal}
+          onAddTask={handleOpenModal}
+          onDeleteTask={handleDeleteTask}
         />
       </main>
+
+      {isModalOpen && (
+        <TaskModalContainer
+          key={selectedGroupId}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          closeModal={handleCloseModal}
+          groups={groups}
+          defaultGroupId={selectedGroupId}
+          onAddTask={handleAddTask}
+        />
+      )}
     </div>
   );
 }
