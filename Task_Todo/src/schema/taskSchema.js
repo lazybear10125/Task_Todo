@@ -5,11 +5,11 @@ export const taskSchema = z.object({
     .string()
     .trim()
     .min(1, "Title no Space")
-    .max(50, "Title max keyword 50"),
+    .max(20, "Title max keyword 20"),
   description: z
     .string()
     .trim()
     .min(1, "Description no Space")
-    .max(150, "Description max keyword 150"),
+    .max(50, "Description max keyword 50"),
   status: z.union([z.string(), z.number()]).optional(),
 });

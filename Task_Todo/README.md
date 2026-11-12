@@ -40,3 +40,6 @@ If you are developing a production application, we recommend using TypeScript wi
    items-start
    overflow-x-hidden bỏ cuộn ngang
 8. use hook form + zod - done
+9. tràn title, description - done
+10. new nameGroup trùng 
+11. Task new trùng title, description
