@@ -7,17 +7,21 @@ export default function TaskListContainer({
   onStatusChange,
   onOpenAddTask,
   onAddTask,
+  onDeleteGroup,
+  deleteGroup,
   onDeleteTask,
   onEditTask,
 }) {
   const handleStatusChange = onStatusChange || changeStatus;
   const handleAddTask = onOpenAddTask || onAddTask;
+  const handleDeleteGroup = onDeleteGroup || deleteGroup;
+
   const columns = groups.map(function (group) {
     const tasksInGroup = tasks.filter(function (task) {
-      if (task.groupId) {
-        return task.groupId === group.id;
+      if (task.groupId !== undefined && task.groupId !== null) {
+        return String(task.groupId) === String(group.id);
       }
-      return task.status === group.id;
+      return String(task.status) === String(group.id);
     });
 
     return {
@@ -35,6 +39,7 @@ export default function TaskListContainer({
       onStatusChange={handleStatusChange}
       changeStatus={handleStatusChange}
       onAddTask={handleAddTask}
+      onDeleteGroup={handleDeleteGroup}
       onDeleteTask={onDeleteTask}
       onEditTask={onEditTask}
     />

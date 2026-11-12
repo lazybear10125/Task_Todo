@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { taskSchema } from "../schema/taskSchema";
@@ -17,6 +17,20 @@ export default function TaskModalContainer({
   const handleCloseCallback = onClose || closeModal;
   const isEditMode = Boolean(taskToEdit);
 
+  const getDefaultValues = useCallback(
+    () => ({
+      title: taskToEdit?.title || "",
+      description: taskToEdit?.description || "",
+      status:
+        taskToEdit?.groupId ??
+        taskToEdit?.status ??
+        defaultGroupId ??
+        groups[0]?.id ??
+        1,
+    }),
+    [taskToEdit, defaultGroupId, groups],
+  );
+
   const {
     register,
     handleSubmit,
@@ -24,71 +38,48 @@ export default function TaskModalContainer({
     formState: { errors },
   } = useForm({
     resolver: zodResolver(taskSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      status: defaultGroupId || (groups[0]?.id ?? "todo"),
-    },
+    defaultValues: getDefaultValues(),
   });
 
-  useEffect(
-    function () {
-      if (isOpen) {
-        if (taskToEdit) {
-          reset({
-            title: taskToEdit.title || "",
-            description: taskToEdit.description || "",
-            status: taskToEdit.groupId || taskToEdit.status || defaultGroupId || "todo",
-          });
-        } else {
-          reset({
-            title: "",
-            description: "",
-            status: defaultGroupId || (groups[0]?.id ?? "todo"),
-          });
-        }
-      }
-    },
-    [isOpen, taskToEdit, defaultGroupId, groups, reset],
-  );
-
-  if (!isOpen) {
-    return null;
-  }
+  useEffect(() => {
+    if (isOpen) {
+      reset(getDefaultValues());
+    }
+  }, [isOpen, getDefaultValues, reset]);
 
   function handleClose() {
-    reset({
-      title: "",
-      description: "",
-      status: defaultGroupId || (groups[0]?.id ?? "todo"),
-    });
+    reset(getDefaultValues());
     if (handleCloseCallback) {
       handleCloseCallback();
     }
   }
 
   function handleFormSubmit(data) {
+    const taskPayload = {
+      title: data.title.trim(),
+      description: data.description.trim(),
+      status: data.status,
+      groupId: data.status,
+    };
+
     if (isEditMode) {
       if (onUpdateTask) {
         onUpdateTask({
           ...taskToEdit,
-          title: data.title.trim(),
-          description: data.description.trim(),
-          status: data.status,
-          groupId: data.status,
+          ...taskPayload,
         });
       }
     } else {
       if (onAddTask) {
-        onAddTask({
-          title: data.title.trim(),
-          description: data.description.trim(),
-          status: data.status,
-          groupId: data.status,
-        });
+        onAddTask(taskPayload);
       }
     }
+
     handleClose();
+  }
+
+  if (!isOpen) {
+    return null;
   }
 
   return (
