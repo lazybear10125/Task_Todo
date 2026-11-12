@@ -47,7 +47,7 @@ export default function TaskList({
         return (
           <div
             key={column.id}
-            className="bg-[#f8fafc] w-[500px] min-w-[300px] shrink-0 border border-[#e2e8f0] rounded-[12px] p-4 flex flex-col"
+            className="bg-[#f8fafc]  min-w-[300px] shrink-0 border border-[#e2e8f0] rounded-[12px] p-4 flex flex-col"
           >
             <div className="flex justify-between items-center pb-3">
               <div className="flex items-center gap-2">
