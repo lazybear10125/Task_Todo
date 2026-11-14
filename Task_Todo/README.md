@@ -43,3 +43,4 @@ If you are developing a production application, we recommend using TypeScript wi
 9. tràn title, description - done
 10. new nameGroup trùng 
 11. Task new trùng title, description
+(dùng toLowerCase  chuyển đổi hóa A -> a, a -> A)
