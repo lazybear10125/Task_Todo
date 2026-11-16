@@ -72,7 +72,10 @@ export default function TaskForm({
   }
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
+    <form
+      className="flex flex-col gap-4"
+      onSubmit={handleSubmit(handleFormSubmit)}
+    >
       <div className="flex flex-col">
         <label
           htmlFor="task-title"
@@ -147,7 +150,7 @@ export default function TaskForm({
         </button>
         <button
           type="submit"
-          className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-0 px-[18px] py-2 rounded-lg text-sm font-semibold cursor-pointer"
+          className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-0 px-4.5 py-2 rounded-lg text-sm font-semibold cursor-pointer"
         >
           {isEditMode ? "Submit" : "Save"}
         </button>

@@ -12,9 +12,7 @@ export default function Header({
   return (
     <header className="bg-white border-b border-[#e2e8f0] px-6 py-4 flex justify-between items-center flex-wrap gap-4">
       <div className="flex items-center gap-3">
-        <h1 className="m-0 text-[20px] font-bold text-[#0f172a]">
-          Todo Task
-        </h1>
+        <h1 className="m-0 text-[20px] font-bold text-[#0f172a]">Todo Task</h1>
       </div>
 
       <div className="flex items-center gap-3 flex-wrap">
@@ -22,7 +20,7 @@ export default function Header({
           <input
             type="text"
             placeholder="Enter NameGroup News..."
-            className="border border-[#cbd5e1] rounded-lg px-3 py-2 text-sm outline-none w-[180px] focus:border-[#2563eb]"
+            className="border border-[#cbd5e1] rounded-lg px-3 py-2 text-sm outline-none w-45 focus:border-[#2563eb]"
             value={newGroupTitle}
             onChange={handleInputChange}
           />

@@ -1,6 +1,4 @@
-import Header from "../components/header/Header";
-import GroupList from "../components/groups/GroupList";
-import TaskModal from "../components/modal/TaskModal";
+import { GroupList, Header, TaskModal } from "../components";
 import { useTodo } from "../hooks/useTodo";
 
 export default function TodoPage() {

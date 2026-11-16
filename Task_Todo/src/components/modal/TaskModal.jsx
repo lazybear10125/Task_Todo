@@ -24,7 +24,7 @@ export default function TaskModal({
       onClick={handleCloseCallback}
     >
       <div
-        className="bg-white rounded-xl w-full max-w-[440px] p-6 shadow-[0_10px_25px_rgba(0,0,0,0.15)] flex flex-col gap-4"
+        className="bg-white rounded-xl w-full max-w-110 p-6 shadow-[0_10px_25px_rgba(0,0,0,0.15)] flex flex-col gap-4"
         onClick={function (e) {
           e.stopPropagation();
         }}

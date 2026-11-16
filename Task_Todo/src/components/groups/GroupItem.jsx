@@ -23,7 +23,7 @@ export default function GroupItem({
   }
 
   return (
-    <div className="bg-[#f8fafc] w-full min-w-0 max-w-full border border-[#e2e8f0] rounded-[12px] p-4 flex flex-col">
+    <div className="bg-[#f8fafc] w-full min-w-0 max-w-full border border-[#e2e8f0] rounded-xl p-4 flex flex-col">
       <div className="flex justify-between items-center pb-3">
         <div className="flex items-center gap-2">
           <h3 className="m-0 text-base font-bold text-[#1e293b]">
