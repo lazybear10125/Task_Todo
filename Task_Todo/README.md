@@ -41,6 +41,8 @@ If you are developing a production application, we recommend using TypeScript wi
    overflow-x-hidden bỏ cuộn ngang
 8. use hook form + zod - done
 9. tràn title, description - done
-10. new nameGroup trùng 
-11. Task new trùng title, description
-(dùng toLowerCase  chuyển đổi hóa A -> a, a -> A)
+10. new nameGroup trùng - done
+11. Task new trùng title, description - done
+
+- toLowerCase chuyển đổi hóa A -> a
+- toUpperCase chuyển đổi hóa a -> A

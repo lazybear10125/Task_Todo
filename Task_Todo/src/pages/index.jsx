@@ -7,6 +7,10 @@ const INITIAL_TASKS = DEFAULT_DATA.flatMap(function (group) {
   return group.tasks;
 });
 
+function normalizeName(name) {
+  return (name || "").trim().toLowerCase();
+}
+
 export default function TodoPage() {
   const [groups, setGroups] = useState(DEFAULT_DATA);
   const [newGroupTitle, setNewGroupTitle] = useState("");
@@ -14,6 +18,24 @@ export default function TodoPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState(1);
   const [editingTask, setEditingTask] = useState(null);
+
+  function isDuplicateGroup(title) {
+    const normalized = normalizeName(title);
+    return groups.some(function (group) {
+      return normalizeName(group.title) === normalized;
+    });
+  }
+
+  function isDuplicateTask(title, currentTaskId = null) {
+    const normalized = normalizeName(title);
+
+    return tasks.some(function (task) {
+      return (
+        String(task.id) !== String(currentTaskId) &&
+        normalizeName(task.title) === normalized
+      );
+    });
+  }
 
   function handleOpenModal(groupId) {
     setEditingTask(null);
@@ -33,21 +55,38 @@ export default function TodoPage() {
   }
 
   function handleAddTask(newTask) {
+    if (isDuplicateTask(newTask.title)) {
+      alert("Task title has been used");
+      return false;
+    }
+
     const taskToAdd = {
       ...newTask,
       id: newTask.id || Date.now().toString(),
     };
+
     setTasks(function (prev) {
       return [...prev, taskToAdd];
     });
+    return true;
   }
 
   function handleUpdateTask(updatedTask) {
+    if (isDuplicateTask(updatedTask.title, updatedTask.id)) {
+      alert("Task title has been used");
+      return false;
+    }
+    const taskToUpdate = {
+      ...updatedTask,
+      title: updatedTask.title.trim(),
+    };
+
     setTasks(function (prev) {
       return prev.map(function (item) {
-        return item.id === updatedTask.id ? updatedTask : item;
+        return item.id === taskToUpdate.id ? taskToUpdate : item;
       });
     });
+    return true;
   }
 
   function handleChangeStatus(taskId, newStatus) {
@@ -109,7 +148,15 @@ export default function TodoPage() {
   function handleAddGroup(event) {
     event.preventDefault();
     const trimmed = newGroupTitle.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      alert("Please enter GroupName");
+      return;
+    }
+
+    if (isDuplicateGroup(trimmed)) {
+      alert("GroupName has been used");
+      return;
+    }
 
     const id = Date.now();
     const newGroup = {
