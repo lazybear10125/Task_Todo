@@ -46,3 +46,25 @@ If you are developing a production application, we recommend using TypeScript wi
 
 - toLowerCase chuyển đổi hóa A -> a
 - toUpperCase chuyển đổi hóa a -> A
+
+header
+groupList
+group
+taskList
+task
+
+<div className="container mx-auto">
+        <div className="grid grid-cols-4">
+          {groups.map((group) => (
+            <div>
+              <div>{group.title}</div>
+              <div>
+                {group.tasks.map((task) => (
+                  <p>{task.title}</p>
+                  <p></p>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>

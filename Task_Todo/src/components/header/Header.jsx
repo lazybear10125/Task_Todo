@@ -1,0 +1,54 @@
+export default function Header({
+  newGroupTitle,
+  onNewGroupTitleChange,
+  onAddGroup,
+  onDeleteGroupByName,
+  onOpenAddTask,
+}) {
+  function handleInputChange(e) {
+    onNewGroupTitleChange(e.target.value);
+  }
+
+  return (
+    <header className="bg-white border-b border-[#e2e8f0] px-6 py-4 flex justify-between items-center flex-wrap gap-4">
+      <div className="flex items-center gap-3">
+        <h1 className="m-0 text-[20px] font-bold text-[#0f172a]">
+          Todo Task
+        </h1>
+      </div>
+
+      <div className="flex items-center gap-3 flex-wrap">
+        <form className="flex items-center gap-2" onSubmit={onAddGroup}>
+          <input
+            type="text"
+            placeholder="Enter NameGroup News..."
+            className="border border-[#cbd5e1] rounded-lg px-3 py-2 text-sm outline-none w-[180px] focus:border-[#2563eb]"
+            value={newGroupTitle}
+            onChange={handleInputChange}
+          />
+          <button
+            type="submit"
+            className="bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#334155] border border-[#cbd5e1] px-3.5 py-2 rounded-lg text-sm font-semibold cursor-pointer"
+          >
+            + Add Group
+          </button>
+          <button
+            type="button"
+            className="bg-[#fef2f2] hover:bg-[#fee2e2] text-[#dc2626] border border-[#fecaca] px-3.5 py-2 rounded-lg text-sm font-semibold cursor-pointer"
+            onClick={onDeleteGroupByName}
+          >
+            - Delete Group
+          </button>
+        </form>
+
+        <button
+          type="button"
+          className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-0 px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer"
+          onClick={onOpenAddTask}
+        >
+          + Add Task
+        </button>
+      </div>
+    </header>
+  );
+}

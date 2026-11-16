@@ -1,11 +1,8 @@
 import { useState } from "react";
-import TaskListContainer from "../containers/TaskListContainer";
-import TaskModalContainer from "../containers/TaskModalContainer";
+import Header from "../components/header/Header";
+import GroupList from "../components/groups/GroupList";
+import TaskModal from "../components/modal/TaskModal";
 import { DEFAULT_DATA } from "../constants/taskConstants";
-
-const INITIAL_TASKS = DEFAULT_DATA.flatMap(function (group) {
-  return group.tasks;
-});
 
 function normalizeName(name) {
   return (name || "").trim().toLowerCase();
@@ -14,7 +11,6 @@ function normalizeName(name) {
 export default function TodoPage() {
   const [groups, setGroups] = useState(DEFAULT_DATA);
   const [newGroupTitle, setNewGroupTitle] = useState("");
-  const [tasks, setTasks] = useState(INITIAL_TASKS);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState(1);
   const [editingTask, setEditingTask] = useState(null);
@@ -29,11 +25,13 @@ export default function TodoPage() {
   function isDuplicateTask(title, currentTaskId = null) {
     const normalized = normalizeName(title);
 
-    return tasks.some(function (task) {
-      return (
-        String(task.id) !== String(currentTaskId) &&
-        normalizeName(task.title) === normalized
-      );
+    return groups.some(function (group) {
+      return (group.tasks || []).some(function (task) {
+        return (
+          String(task.id) !== String(currentTaskId) &&
+          normalizeName(task.title) === normalized
+        );
+      });
     });
   }
 
@@ -60,13 +58,25 @@ export default function TodoPage() {
       return false;
     }
 
+    const targetGroupId =
+      newTask.status || newTask.groupId || groups[0]?.id || 1;
     const taskToAdd = {
       ...newTask,
       id: newTask.id || Date.now().toString(),
+      groupId: targetGroupId,
+      status: targetGroupId,
     };
 
-    setTasks(function (prev) {
-      return [...prev, taskToAdd];
+    setGroups(function (prev) {
+      return prev.map(function (group) {
+        if (String(group.id) === String(targetGroupId)) {
+          return {
+            ...group,
+            tasks: [...(group.tasks || []), taskToAdd],
+          };
+        }
+        return group;
+      });
     });
     return true;
   }
@@ -76,37 +86,86 @@ export default function TodoPage() {
       alert("Task title has been used");
       return false;
     }
+
+    const newGroupId = updatedTask.status || updatedTask.groupId;
     const taskToUpdate = {
       ...updatedTask,
       title: updatedTask.title.trim(),
+      groupId: newGroupId,
+      status: newGroupId,
     };
 
-    setTasks(function (prev) {
-      return prev.map(function (item) {
-        return item.id === taskToUpdate.id ? taskToUpdate : item;
+    setGroups(function (prev) {
+      return prev.map(function (group) {
+        const filteredTasks = (group.tasks || []).filter(function (item) {
+          return String(item.id) !== String(taskToUpdate.id);
+        });
+
+        if (String(group.id) === String(newGroupId)) {
+          return {
+            ...group,
+            tasks: [...filteredTasks, taskToUpdate],
+          };
+        }
+
+        return {
+          ...group,
+          tasks: filteredTasks,
+        };
       });
     });
     return true;
   }
 
   function handleChangeStatus(taskId, newStatus) {
-    const updatedTasks = tasks.map(function (task) {
-      if (task.id === taskId) {
-        return {
-          ...task,
-          status: newStatus,
-          groupId: newStatus,
-        };
+    setGroups(function (prev) {
+      let movingTask = null;
+
+      for (const group of prev) {
+        const found = (group.tasks || []).find(function (t) {
+          return String(t.id) === String(taskId);
+        });
+        if (found) {
+          movingTask = {
+            ...found,
+            groupId: newStatus,
+            status: newStatus,
+          };
+          break;
+        }
       }
-      return task;
+
+      if (!movingTask) return prev;
+
+      return prev.map(function (group) {
+        const remainingTasks = (group.tasks || []).filter(function (t) {
+          return String(t.id) !== String(taskId);
+        });
+
+        if (String(group.id) === String(newStatus)) {
+          return {
+            ...group,
+            tasks: [...remainingTasks, movingTask],
+          };
+        }
+
+        return {
+          ...group,
+          tasks: remainingTasks,
+        };
+      });
     });
-    setTasks(updatedTasks);
   }
 
   function handleDeleteTask(taskId) {
-    setTasks(function (prev) {
-      return prev.filter(function (task) {
-        return task.id !== taskId;
+    setGroups(function (prev) {
+      return prev.map(function (group) {
+        return {
+          ...group,
+          tasks: (group.tasks || []).filter(function (task) {
+            return String(task.id) !== String(taskId);
+          }),
+        };
       });
     });
   }
@@ -115,15 +174,6 @@ export default function TodoPage() {
     setGroups(function (prev) {
       return prev.filter(function (group) {
         return String(group.id) !== String(groupId);
-      });
-    });
-
-    setTasks(function (prev) {
-      return prev.filter(function (task) {
-        return (
-          String(task.groupId) !== String(groupId) &&
-          String(task.status) !== String(groupId)
-        );
       });
     });
   }
@@ -172,70 +222,33 @@ export default function TodoPage() {
     setNewGroupTitle("");
   }
 
+  function handleOpenAddModal() {
+    handleOpenModal(groups[0]?.id || 1);
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f1f5f9]">
-      <header className="bg-white border-b border-[#e2e8f0] px-6 py-4 flex justify-between items-center flex-wrap gap-4">
-        <div className="flex items-center gap-3">
-          <h1 className="m-0 text-[20px] font-bold text-[#0f172a]">
-            Todo Task
-          </h1>
-        </div>
+      <Header
+        newGroupTitle={newGroupTitle}
+        onNewGroupTitleChange={setNewGroupTitle}
+        onAddGroup={handleAddGroup}
+        onDeleteGroupByName={handleDeleteGroupByName}
+        onOpenAddTask={handleOpenAddModal}
+      />
 
-        <div className="flex items-center gap-3 flex-wrap">
-          <form className="flex items-center gap-2" onSubmit={handleAddGroup}>
-            <input
-              type="text"
-              placeholder="Enter NameGroup News..."
-              className="border border-[#cbd5e1] rounded-lg px-3 py-2 text-sm outline-none w-[180px] focus:border-[#2563eb]"
-              value={newGroupTitle}
-              onChange={function (e) {
-                setNewGroupTitle(e.target.value);
-              }}
-            />
-            <button
-              type="submit"
-              className="bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#334155] border border-[#cbd5e1] px-3.5 py-2 rounded-lg text-sm font-semibold cursor-pointer"
-            >
-              + Add Group
-            </button>
-            <button
-              type="button"
-              className="bg-[#fef2f2] hover:bg-[#fee2e2] text-[#dc2626] border border-[#fecaca] px-3.5 py-2 rounded-lg text-sm font-semibold cursor-pointer"
-              onClick={handleDeleteGroupByName}
-            >
-              - Delete Group
-            </button>
-          </form>
-
-          <button
-            type="button"
-            className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-0 px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer"
-            onClick={function () {
-              handleOpenModal(groups[0]?.id || 1);
-            }}
-          >
-            + Add Task
-          </button>
-        </div>
-      </header>
-
-      <main className="flex-1 flex overflow-hidden">
-        <TaskListContainer
+      <main className="flex-1 flex overflow-y-auto overflow-x-hidden">
+        <GroupList
           groups={groups}
-          tasks={tasks}
-          changeStatus={handleChangeStatus}
           onStatusChange={handleChangeStatus}
-          onOpenAddTask={handleOpenModal}
           onAddTask={handleOpenModal}
           onDeleteGroup={handleDeleteGroup}
           onDeleteTask={handleDeleteTask}
           onEditTask={handleOpenEditModal}
-          onClose={handleCloseModal}
         />
       </main>
 
       {isModalOpen && (
-        <TaskModalContainer
+        <TaskModal
           key={editingTask ? editingTask.id : selectedGroupId}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
