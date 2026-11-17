@@ -1,4 +1,4 @@
-export const DEFAULT_DATA = [
+export const defaultGroups = [
   {
     id: 1,
     type: "todo",
@@ -11,8 +11,8 @@ export const DEFAULT_DATA = [
   },
   {
     id: 2,
-    type: "improgress",
-    title: "Improgress",
+    type: "inprogress",
+    title: "In progress",
     tasks: [
       { id: 4, groupId: 2, title: "Task4", description: "Des task 4" },
       { id: 5, groupId: 2, title: "Task5", description: "Des task 5" },
@@ -31,4 +31,4 @@ export const DEFAULT_DATA = [
   },
 ];
 
-export default DEFAULT_DATA;
+export default defaultGroups;

@@ -1,4 +1,8 @@
-import { GroupList, Header, TaskModal } from "../components";
+import Header from "../components/Header";
+import GroupList from "../components/groups/GroupList";
+import Modal from "../components/Modal";
+import TaskForm from "../components/groups/tasks/TaskForm";
+import TodoDndContext from "../dnd/TodoDndContext";
 import { useTodo } from "../hooks/useTodo";
 
 export default function TodoPage() {
@@ -9,6 +13,9 @@ export default function TodoPage() {
     isModalOpen,
     selectedGroupId,
     editingTask,
+    activeMenuId,
+    handleToggleMenu,
+    handleCloseMenu,
     handleAddGroup,
     handleDeleteGroup,
     handleDeleteGroupByName,
@@ -20,6 +27,7 @@ export default function TodoPage() {
     handleUpdateTask,
     handleChangeStatus,
     handleDeleteTask,
+    handleDragEnd,
   } = useTodo();
 
   return (
@@ -33,29 +41,37 @@ export default function TodoPage() {
       />
 
       <main className="flex-1 flex overflow-y-auto overflow-x-hidden">
-        <GroupList
-          groups={groups}
-          onStatusChange={handleChangeStatus}
-          onAddTask={handleOpenModal}
-          onDeleteGroup={handleDeleteGroup}
-          onDeleteTask={handleDeleteTask}
-          onEditTask={handleOpenEditModal}
-        />
+        <TodoDndContext onDragEnd={handleDragEnd}>
+          <GroupList
+            groups={groups}
+            onStatusChange={handleChangeStatus}
+            onAddTask={handleOpenModal}
+            onDeleteGroup={handleDeleteGroup}
+            onDeleteTask={handleDeleteTask}
+            onEditTask={handleOpenEditModal}
+            activeMenuId={activeMenuId}
+            onToggleMenu={handleToggleMenu}
+            onCloseMenu={handleCloseMenu}
+          />
+        </TodoDndContext>
       </main>
 
-      {isModalOpen && (
-        <TaskModal
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        title={editingTask ? "EditingTask" : "AddTask"}
+      >
+        <TaskForm
           key={editingTask ? editingTask.id : selectedGroupId}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          closeModal={handleCloseModal}
           groups={groups}
-          taskToEdit={editingTask}
           defaultGroupId={selectedGroupId}
+          taskToEdit={editingTask}
+          isEditMode={Boolean(editingTask)}
+          onClose={handleCloseModal}
           onAddTask={handleAddTask}
           onUpdateTask={handleUpdateTask}
         />
-      )}
+      </Modal>
     </div>
   );
 }

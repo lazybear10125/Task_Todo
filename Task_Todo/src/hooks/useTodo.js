@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { DEFAULT_DATA } from "../constants/taskConstants";
+import defaultGroups from "../constants/defaultGroups";
+import { handleDndDragEnd } from "../dnd/TodoDndContext";
 
 const normalizeName = (name) => (name || "").trim().toLowerCase();
 
 export const useTodo = () => {
-  const [groups, setGroups] = useState(DEFAULT_DATA);
+  const [groups, setGroups] = useState(defaultGroups);
   const [newGroupTitle, setNewGroupTitle] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState(1);
   const [editingTask, setEditingTask] = useState(null);
+  const [activeMenuId, setActiveMenuId] = useState(null);
 
   const isDuplicateGroup = (title) =>
     groups.some((g) => normalizeName(g.title) === normalizeName(title));
@@ -22,7 +24,16 @@ export const useTodo = () => {
       ),
     );
 
+  const handleToggleMenu = (groupId) => {
+    setActiveMenuId((prev) => (prev === groupId ? null : groupId));
+  };
+
+  const handleCloseMenu = () => {
+    setActiveMenuId(null);
+  };
+
   const handleOpenModal = (groupId) => {
+    handleCloseMenu();
     setEditingTask(null);
     setSelectedGroupId(groupId || groups[0]?.id || 1);
     setIsModalOpen(true);
@@ -34,6 +45,7 @@ export const useTodo = () => {
   };
 
   const handleOpenEditModal = (task) => {
+    handleCloseMenu();
     setEditingTask(task);
     setSelectedGroupId(task.groupId || task.status || 1);
     setIsModalOpen(true);
@@ -128,6 +140,7 @@ export const useTodo = () => {
   };
 
   const handleDeleteGroup = (groupId) => {
+    handleCloseMenu();
     setGroups((prev) => prev.filter((g) => String(g.id) !== String(groupId)));
   };
 
@@ -168,6 +181,8 @@ export const useTodo = () => {
     setNewGroupTitle("");
   };
 
+  const handleDragEnd = (event) => handleDndDragEnd(event, setGroups);
+
   return {
     groups,
     newGroupTitle,
@@ -175,6 +190,9 @@ export const useTodo = () => {
     isModalOpen,
     selectedGroupId,
     editingTask,
+    activeMenuId,
+    handleToggleMenu,
+    handleCloseMenu,
     handleAddGroup,
     handleDeleteGroup,
     handleDeleteGroupByName,
@@ -186,6 +204,7 @@ export const useTodo = () => {
     handleUpdateTask,
     handleChangeStatus,
     handleDeleteTask,
+    handleDragEnd,
   };
 };
 

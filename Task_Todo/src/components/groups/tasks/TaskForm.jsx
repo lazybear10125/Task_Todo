@@ -1,7 +1,8 @@
 import { useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { taskSchema } from "../../schema/taskSchema";
+import { taskSchema } from "../../../schema/taskSchema";
+import Button from "../../buttons/Button";
 
 export default function TaskForm({
   groups = [],
@@ -141,19 +142,12 @@ export default function TaskForm({
       </div>
 
       <div className="flex justify-end gap-2.5 border-t border-[#f1f5f9] pt-4">
-        <button
-          type="button"
-          className="bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] border border-[#cbd5e1] px-4 py-2 rounded-lg text-sm font-medium cursor-pointer"
-          onClick={handleCancel}
-        >
+        <Button variant="cancel" onClick={handleCancel}>
           Cancel
-        </button>
-        <button
-          type="submit"
-          className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-0 px-4.5 py-2 rounded-lg text-sm font-semibold cursor-pointer"
-        >
+        </Button>
+        <Button variant="save" type="submit">
           {isEditMode ? "Submit" : "Save"}
-        </button>
+        </Button>
       </div>
     </form>
   );

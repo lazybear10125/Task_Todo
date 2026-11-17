@@ -1,3 +1,5 @@
+import Button from "./buttons/Button";
+
 export default function Header({
   newGroupTitle,
   onNewGroupTitleChange,
@@ -24,28 +26,30 @@ export default function Header({
             value={newGroupTitle}
             onChange={handleInputChange}
           />
-          <button
+          <Button
             type="submit"
-            className="bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#334155] border border-[#cbd5e1] px-3.5 py-2 rounded-lg text-sm font-semibold cursor-pointer"
+            variant="add"
+            className="bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#334155] border border-[#cbd5e1]"
           >
             + Add Group
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="bg-[#fef2f2] hover:bg-[#fee2e2] text-[#dc2626] border border-[#fecaca] px-3.5 py-2 rounded-lg text-sm font-semibold cursor-pointer"
+            variant="delete"
             onClick={onDeleteGroupByName}
           >
             - Delete Group
-          </button>
+          </Button>
         </form>
 
-        <button
+        <Button
           type="button"
-          className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-0 px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer"
+          variant="add"
+          className="px-4"
           onClick={onOpenAddTask}
         >
           + Add Task
-        </button>
+        </Button>
       </div>
     </header>
   );
