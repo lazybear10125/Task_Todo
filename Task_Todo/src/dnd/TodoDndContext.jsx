@@ -84,11 +84,11 @@ export function DragHandle({ className = "", ...props }) {
       className={`p-1 text-[#64748b] hover:text-[#0f172a] hover:bg-[#e2e8f0] rounded cursor-grab active:cursor-grabbing flex items-center justify-center border-0 bg-transparent touch-none select-none ${className}`}
       {...props}
     >
-      <img
+      {/* <img
         src="https://www.svgrepo.com/show/459043/drag-handle.svg"
         alt="Drag"
         className="w-4 h-4 pointer-events-none"
-      />
+      /> */}
     </button>
   );
 }
@@ -123,10 +123,8 @@ export const handleDndDragEnd = (event, setGroups) => {
         (g) => String(g.id) === overGroupId,
       );
 
-      if (oldIndex !== -1 && newIndex !== -1) {
-        return arrayMove(prevGroups, oldIndex, newIndex);
-      }
-      return prevGroups;
+      if (oldIndex === -1 || newIndex === -1) return prevGroups;
+      return arrayMove(prevGroups, oldIndex, newIndex);
     });
     return;
   }
@@ -163,24 +161,25 @@ export const handleDndDragEnd = (event, setGroups) => {
       if (newIndex !== -1 && oldIndex !== newIndex) {
         sourceGroup.tasks = arrayMove(sourceGroup.tasks, oldIndex, newIndex);
       }
+      return newGroups;
+    }
+
+    const [movedTask] = sourceGroup.tasks.splice(oldIndex, 1);
+
+    const updatedTask = {
+      ...movedTask,
+      groupId: targetGroup.id,
+      status: targetGroup.id,
+    };
+
+    const overTaskIndex = targetGroup.tasks.findIndex(
+      (task) => String(task.id) === String(over.id),
+    );
+
+    if (overTaskIndex >= 0) {
+      targetGroup.tasks.splice(overTaskIndex, 0, updatedTask);
     } else {
-      const [movedTask] = sourceGroup.tasks.splice(oldIndex, 1);
-
-      const updatedTask = {
-        ...movedTask,
-        groupId: targetGroup.id,
-        status: targetGroup.id,
-      };
-
-      const overTaskIndex = targetGroup.tasks.findIndex(
-        (task) => String(task.id) === String(over.id),
-      );
-
-      if (overTaskIndex >= 0) {
-        targetGroup.tasks.splice(overTaskIndex, 0, updatedTask);
-      } else {
-        targetGroup.tasks.push(updatedTask);
-      }
+      targetGroup.tasks.push(updatedTask);
     }
 
     return newGroups;

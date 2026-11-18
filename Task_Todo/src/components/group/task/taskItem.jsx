@@ -1,5 +1,5 @@
-import { useSortableTask } from "../../../dnd/TodoDndContext";
-import Button from "../../buttons/Button";
+// import { useSortableTask } from "../../../dnd/TodoDndContext";
+import Button from "../../button/button";
 
 export default function TaskItem({
   task,
@@ -9,33 +9,30 @@ export default function TaskItem({
   onDeleteTask,
   onEditTask,
 }) {
-  const { setNodeRef, style, dragProps } = useSortableTask(task);
+  // const { setNodeRef, style, dragProps } = useSortableTask(task);
 
   function handleEdit(e) {
     e.stopPropagation();
-    if (onEditTask) {
-      onEditTask(task);
-    }
+    if (!onEditTask) return;
+    onEditTask(task);
   }
 
   function handleDelete(e) {
     e.stopPropagation();
-    if (onDeleteTask) {
-      onDeleteTask(task.id);
-    }
+    if (!onDeleteTask) return;
+    onDeleteTask(task.id);
   }
 
   function handleStatusChange(event) {
-    if (onStatusChange) {
-      onStatusChange(task.id, event.target.value);
-    }
+    if (!onStatusChange) return;
+    onStatusChange(task.id, event.target.value);
   }
 
   return (
     <div
-      ref={setNodeRef}
-      style={style}
-      {...dragProps}
+      // ref={setNodeRef}
+      // style={style}
+      // {...dragProps}
       className="border-0 rounded-lg px-2.5 py-3 flex flex-col gap-3 bg-[#e2ebf6] w-full min-w-0 max-w-full cursor-grab active:cursor-grabbing select-none touch-none"
     >
       <div className="flex flex-wrap justify-between items-start gap-2 min-w-0 w-full">

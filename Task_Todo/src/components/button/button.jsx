@@ -10,9 +10,11 @@ export default function Button({
   const variantStyles = {
     add: "bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-0",
     edit: "bg-[#eff6ff] hover:bg-[#dbeafe] text-[#2563eb] border-0",
-    delete: "bg-[#fef2f2] hover:bg-[#fee2e2] text-[#dc2626] border border-[#fecaca]",
+    delete:
+      "bg-[#fef2f2] hover:bg-[#fee2e2] text-[#dc2626] border border-[#fecaca]",
     save: "bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-0",
-    cancel: "bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] border border-[#cbd5e1]",
+    cancel:
+      "bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] border border-[#cbd5e1]",
   };
 
   const selectedVariantStyle = variantStyles[variant] || variantStyles.add;

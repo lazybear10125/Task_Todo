@@ -1,5 +1,5 @@
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
-import GroupItem from "./GroupItem";
+import GroupItem from "./groupItem";
 
 export default function GroupList({
   groups = [],

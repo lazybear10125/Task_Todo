@@ -1,8 +1,8 @@
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { taskSchema } from "../../../schema/taskSchema";
-import Button from "../../buttons/Button";
+import Button from "../../button/button";
 
 export default function TaskForm({
   groups = [],
@@ -13,19 +13,21 @@ export default function TaskForm({
   onAddTask,
   onUpdateTask,
 }) {
-  const getDefaultValues = useCallback(
-    () => ({
-      title: taskToEdit?.title || "",
-      description: taskToEdit?.description || "",
-      status:
-        taskToEdit?.groupId ??
-        taskToEdit?.status ??
-        defaultGroupId ??
-        groups[0]?.id ??
-        1,
-    }),
-    [taskToEdit, defaultGroupId, groups],
-  );
+  // const getDefaultValues = useCallback(
+  //   () => ({
+  //     title: taskToEdit?.title || "",
+  //     description: taskToEdit?.description || "",
+  //     status:
+  //       taskToEdit?.groupId ??
+  //       taskToEdit?.status ??
+  //       defaultGroupId ??
+  //       groups[0]?.id ??
+  //       1,
+  //   }),
+  //   [taskToEdit, defaultGroupId, groups],
+  // );
+
+  // Luu State vao thang  or useEffect
 
   const {
     register,
@@ -34,18 +36,39 @@ export default function TaskForm({
     formState: { errors },
   } = useForm({
     resolver: zodResolver(taskSchema),
-    defaultValues: getDefaultValues(),
+    defaultValues: {
+      title: "",
+      description: "",
+      status: 1,
+    },
   });
 
   useEffect(() => {
-    reset(getDefaultValues());
-  }, [getDefaultValues, reset]);
+    reset({
+      title: taskToEdit?.title || "",
+      description: taskToEdit?.description || "",
+      status:
+        taskToEdit?.groupId ??
+        taskToEdit?.status ??
+        defaultGroupId ??
+        groups[0]?.id ??
+        1,
+    });
+  }, [taskToEdit, defaultGroupId, groups, reset]);
 
   function handleCancel() {
-    reset(getDefaultValues());
-    if (onClose) {
-      onClose();
-    }
+    reset({
+      title: taskToEdit?.title || "",
+      description: taskToEdit?.description || "",
+      status:
+        taskToEdit?.groupId ??
+        taskToEdit?.status ??
+        defaultGroupId ??
+        groups[0]?.id ??
+        1, //Cho no khong tra ve undefind or Null
+    });
+    if (!onClose) return;
+    onClose();
   }
 
   function handleFormSubmit(data) {
@@ -63,10 +86,12 @@ export default function TaskForm({
           ...taskPayload,
         });
       }
-    } else {
-      if (onAddTask) {
-        onAddTask(taskPayload);
-      }
+      handleCancel();
+      return;
+    }
+
+    if (onAddTask) {
+      onAddTask(taskPayload);
     }
 
     handleCancel();
@@ -131,13 +156,11 @@ export default function TaskForm({
           className="border border-[#cbd5e1] rounded-lg px-3 py-2 text-sm outline-none bg-white cursor-pointer"
           {...register("status")}
         >
-          {groups.map(function (group) {
-            return (
-              <option key={group.id} value={group.id}>
-                {group.title}
-              </option>
-            );
-          })}
+          {groups.map((group) => (
+            <option key={group.id} value={group.id}>
+              {group.title}
+            </option>
+          ))}
         </select>
       </div>
 

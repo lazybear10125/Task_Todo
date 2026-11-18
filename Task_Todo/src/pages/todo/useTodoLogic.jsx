@@ -1,6 +1,6 @@
 import { useState } from "react";
-import defaultGroups from "../constants/defaultGroups";
-import { handleDndDragEnd } from "../dnd/TodoDndContext";
+import defaultGroups from "../../constants/defaultGroups";
+import { handleDndDragEnd } from "../../dnd/TodoDndContext";
 
 const normalizeName = (name) => (name || "").trim().toLowerCase();
 
@@ -12,17 +12,21 @@ export const useTodo = () => {
   const [editingTask, setEditingTask] = useState(null);
   const [activeMenuId, setActiveMenuId] = useState(null);
 
-  const isDuplicateGroup = (title) =>
-    groups.some((g) => normalizeName(g.title) === normalizeName(title));
-
-  const isDuplicateTask = (title, currentTaskId = null) =>
-    groups.some((g) =>
+  const isDuplicateGroup = (title) => {
+    return groups.some((g) => normalizeName(g.title) === normalizeName(title));
+  };
+  // currentTaskId Loai bo task dang change(tranh viec task tu xem no la bi trung)
+  //  some 1: duyet Group
+  //  some 2: duyet Task
+  const isDuplicateTask = (title, currentTaskId = null) => {
+    return groups.some((g) =>
       (g.tasks || []).some(
         (t) =>
           String(t.id) !== String(currentTaskId) &&
           normalizeName(t.title) === normalizeName(title),
       ),
     );
+  };
 
   const handleToggleMenu = (groupId) => {
     setActiveMenuId((prev) => (prev === groupId ? null : groupId));
@@ -59,14 +63,14 @@ export const useTodo = () => {
       return false;
     }
 
-    const targetGroupId =
-      newTask.status || newTask.groupId || groups[0]?.id || 1;
+    const targetGroupId = newTask.status || newTask.groupId || groups[0]?.id;
     const taskToAdd = {
       ...newTask,
       id: newTask.id || Date.now().toString(),
       groupId: targetGroupId,
       status: targetGroupId,
     };
+    console.log("Task title:", taskToAdd.title, taskToAdd);
 
     setGroups((prev) =>
       prev.map((g) =>
@@ -151,10 +155,10 @@ export const useTodo = () => {
       return;
     }
     const groupToDelete = groups.find((g) => g.title.toLowerCase() === trimmed);
-    if (groupToDelete) {
-      handleDeleteGroup(groupToDelete.id);
-      setNewGroupTitle("");
-    }
+    if (!groupToDelete) return;
+
+    handleDeleteGroup(groupToDelete.id);
+    setNewGroupTitle("");
   };
 
   const handleAddGroup = (event) => {

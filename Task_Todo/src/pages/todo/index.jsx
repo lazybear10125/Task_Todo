@@ -1,9 +1,9 @@
-import Header from "../components/Header";
-import GroupList from "../components/groups/GroupList";
-import Modal from "../components/Modal";
-import TaskForm from "../components/groups/tasks/TaskForm";
-import TodoDndContext from "../dnd/TodoDndContext";
-import { useTodo } from "../hooks/useTodo";
+import Header from "../../components/header";
+import GroupList from "../../components/group/groupList";
+import Modal from "../../components/modal";
+import TaskForm from "../../components/group/task/taskForm";
+import TodoDndContext from "../../dnd/TodoDndContext";
+import { useTodo } from "./useTodoLogic";
 
 export default function TodoPage() {
   const {

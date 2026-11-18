@@ -70,40 +70,40 @@ task
       </div>
 
 src/
-|
-|-- components/
-| |
-| |-- groups/
-| | |-- GroupItem.jsx
-| | |-- GroupList.jsx
-| | |-- GroupMenu.jsx
-| | |
-| | |-- tasks/
-| | |-- TaskItem.jsx
-| | |-- TaskList.jsx
-| | |-- TaskForm.jsx
-| |
-| |-- buttons/
-| | |-- Button.jsx
-| |
-| |-- Header.jsx
-| |-- Modal.jsx
-|
-|-- hooks/
-| |-- useTodo.js
-|
-|-- dnd/
-| |-- TodoDndContext.jsx
-|
-|-- schema/
-| |-- taskSchema.js
-|
-|-- constants/
-| |-- defaultGroups.js
-|
-|-- pages/
-| |-- TodoPage.jsx
-|
-|-- App.jsx
-|-- index.css
-|-- main.jsx
+
+-- components/
+
+-- groups/
+-- GroupItem.jsx
+-- GroupList.jsx
+-- GroupMenu.jsx
+
+-- tasks/
+-- TaskItem.jsx
+-- TaskList.jsx
+-- TaskForm.jsx
+
+-- buttons/
+-- Button.jsx
+
+-- Header.jsx
+-- Modal.jsx
+
+-- hooks/
+-- useTodo.js
+
+-- dnd/
+-- TodoDndContext.jsx
+
+-- schema/
+-- taskSchema.js
+
+-- constants/
+-- defaultGroups.js
+
+-- pages/
+-- TodoPage.jsx
+
+-- App.jsx
+-- index.css
+-- main.jsx

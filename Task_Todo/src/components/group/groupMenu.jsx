@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import Button from "../buttons/Button";
+import Button from "../button/button";
 
 export default function GroupMenu({
   groupId,
@@ -16,39 +16,45 @@ export default function GroupMenu({
   const isOpen = isControlled ? controlledIsOpen : localIsOpen;
 
   const handleClose = () => {
-    if (isControlled) {
-      controlledOnClose?.();
-    } else {
+    if (!isControlled) {
       setLocalIsOpen(false);
+      return;
     }
+
+    controlledOnClose?.();
   };
 
   const handleToggle = (e) => {
     e.stopPropagation();
-    if (isControlled) {
-      controlledOnToggle?.();
-    } else {
+
+    if (!isControlled) {
       setLocalIsOpen((prev) => !prev);
+      return;
     }
+
+    controlledOnToggle?.();
   };
 
   useEffect(() => {
     if (!isOpen) return;
 
     function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        if (isControlled) {
-          controlledOnClose?.();
-        } else {
-          setLocalIsOpen(false);
-        }
-      }
-    }
+      if (!menuRef.current || menuRef.current.contains(event.target)) return;
 
+      if (!isControlled) {
+        setLocalIsOpen(false);
+        return;
+      }
+
+      controlledOnClose?.();
+    }
+    // event onClick duoc goi va luu
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
+    // Can xoa event tranh tinh tranh nhieu Listener
   }, [isOpen, isControlled, controlledOnClose]);
 
   function handleAddTask() {
@@ -93,6 +99,7 @@ export default function GroupMenu({
           >
             Add Task
           </Button>
+
           {onDeleteGroup && (
             <Button
               variant="delete"

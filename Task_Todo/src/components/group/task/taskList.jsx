@@ -1,5 +1,8 @@
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import TaskItem from "./TaskItem";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import TaskItem from "./taskItem";
 
 export default function TaskList({
   tasks = [],

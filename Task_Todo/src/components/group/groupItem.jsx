@@ -1,6 +1,6 @@
 import { useSortableGroup, DragHandle } from "../../dnd/TodoDndContext";
-import GroupMenu from "./GroupMenu";
-import TaskList from "./tasks/TaskList";
+import GroupMenu from "./groupMenu";
+import TaskList from "./task/taskList";
 
 export default function GroupItem({
   group,

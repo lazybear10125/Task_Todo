@@ -1,4 +1,4 @@
-import Button from "./buttons/Button";
+import Button from "./button/button";
 
 export default function Header({
   newGroupTitle,
@@ -29,15 +29,11 @@ export default function Header({
           <Button
             type="submit"
             variant="add"
-            className="bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#334155] border border-[#cbd5e1]"
+            className="bg-[#4a5b6d] hover:bg-[#005cd5] text-[#060707] border border-[#cbd5e1]"
           >
             + Add Group
           </Button>
-          <Button
-            type="button"
-            variant="delete"
-            onClick={onDeleteGroupByName}
-          >
+          <Button type="button" variant="delete" onClick={onDeleteGroupByName}>
             - Delete Group
           </Button>
         </form>
@@ -46,7 +42,10 @@ export default function Header({
           type="button"
           variant="add"
           className="px-4"
-          onClick={onOpenAddTask}
+          onClick={() => {
+            console.log("+AddTask");
+            onOpenAddTask();
+          }}
         >
           + Add Task
         </Button>
