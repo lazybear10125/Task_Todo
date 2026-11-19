@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { taskSchema } from "../../../schema/taskSchema";
 import Button from "../../button/button";
 
+// Form thêm mới hoặc chỉnh sửa công việc (Task)
 export default function TaskForm({
   groups = [],
   defaultGroupId,
@@ -13,22 +14,7 @@ export default function TaskForm({
   onAddTask,
   onUpdateTask,
 }) {
-  // const getDefaultValues = useCallback(
-  //   () => ({
-  //     title: taskToEdit?.title || "",
-  //     description: taskToEdit?.description || "",
-  //     status:
-  //       taskToEdit?.groupId ??
-  //       taskToEdit?.status ??
-  //       defaultGroupId ??
-  //       groups[0]?.id ??
-  //       1,
-  //   }),
-  //   [taskToEdit, defaultGroupId, groups],
-  // );
-
-  // Luu State vao thang  or useEffect
-
+  // Khởi tạo React Hook Form kết hợp với Zod schema để tự động xác thực dữ liệu
   const {
     register,
     handleSubmit,
@@ -43,6 +29,9 @@ export default function TaskForm({
     },
   });
 
+  // Đồng bộ dữ liệu vào Form khi component mount hoặc khi taskToEdit/defaultGroupId thay đổi:
+  // Nếu đang chỉnh sửa: nạp dữ liệu cũ của taskToEdit
+  // Nếu tạo mới: nạp giá trị mặc định theo defaultGroupId hoặc nhóm đầu tiên
   useEffect(() => {
     reset({
       title: taskToEdit?.title || "",
@@ -56,6 +45,7 @@ export default function TaskForm({
     });
   }, [taskToEdit, defaultGroupId, groups, reset]);
 
+  // Logic hủy thao tác: reset lại dữ liệu của form và đóng modal
   function handleCancel() {
     reset({
       title: taskToEdit?.title || "",
@@ -65,12 +55,16 @@ export default function TaskForm({
         taskToEdit?.status ??
         defaultGroupId ??
         groups[0]?.id ??
-        1, //Cho no khong tra ve undefind or Null
+        1, // Giá trị dự phòng để tránh undefined hoặc null
     });
     if (!onClose) return;
     onClose();
   }
 
+  // Logic xử lý khi người dùng submit form hợp lệ:
+  // 1. Chuẩn hóa chuỗi (trim) cho title và description
+  // 2. Kiểm tra chế độ: nếu là Edit -> gọi onUpdateTask, nếu là Add -> gọi onAddTask
+  // 3. Đóng form và reset sau khi hoàn tất
   function handleFormSubmit(data) {
     const taskPayload = {
       title: data.title.trim(),
@@ -102,6 +96,7 @@ export default function TaskForm({
       className="flex flex-col gap-4"
       onSubmit={handleSubmit(handleFormSubmit)}
     >
+      {/* Trường nhập tiêu đề công việc */}
       <div className="flex flex-col">
         <label
           htmlFor="task-title"
@@ -116,6 +111,7 @@ export default function TaskForm({
           placeholder="Enter Title Job..."
           {...register("title")}
         />
+        {/* Hiển thị thông báo lỗi validate của trường Title */}
         {errors.title && (
           <p className="m-0 mt-1 text-xs text-[#ef4444]">
             {errors.title.message || errors.title}
@@ -123,6 +119,7 @@ export default function TaskForm({
         )}
       </div>
 
+      {/* Trường nhập mô tả chi tiết công việc */}
       <div className="flex flex-col">
         <label
           htmlFor="task-description"
@@ -137,6 +134,7 @@ export default function TaskForm({
           placeholder="Enter Describe Job..."
           {...register("description")}
         />
+        {/* Hiển thị thông báo lỗi validate của trường Description */}
         {errors.description && (
           <p className="m-0 mt-1 text-xs text-[#ef4444]">
             {errors.description.message || errors.description}
@@ -144,6 +142,7 @@ export default function TaskForm({
         )}
       </div>
 
+      {/* Chọn trạng thái/nhóm của công việc */}
       <div className="flex flex-col">
         <label
           htmlFor="task-status"
@@ -164,6 +163,7 @@ export default function TaskForm({
         </select>
       </div>
 
+      {/* Các nút hành động Cancel / Save */}
       <div className="flex justify-end gap-2.5 border-t border-[#f1f5f9] pt-4">
         <Button variant="cancel" onClick={handleCancel}>
           Cancel

@@ -1,3 +1,5 @@
+// Danh sách các nhóm công việc (cột Kanban) mặc định ban đầu khi khởi tạo ứng dụng
+// Mỗi nhóm gồm có: id, type (mã định danh dạng slug), title (tên hiển thị), và mảng tasks
 export const defaultGroups = [
   {
     id: 1,
