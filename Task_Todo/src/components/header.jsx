@@ -49,10 +49,7 @@ export default function Header({
           type="button"
           variant="add"
           className="px-4"
-          onClick={() => {
-            console.log("+AddTask");
-            onOpenAddTask();
-          }}
+          onClick={onOpenAddTask}
         >
           + Add Task
         </Button>

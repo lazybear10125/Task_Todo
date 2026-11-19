@@ -1,4 +1,3 @@
-import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import GroupItem from "./groupItem";
 
 // Component hiển thị danh sách toàn bộ các cột nhóm (Board Layout)
@@ -9,37 +8,24 @@ export default function GroupList({
   onDeleteGroup,
   onDeleteTask,
   onEditTask,
-  activeMenuId,
-  onToggleMenu,
-  onCloseMenu,
 }) {
-  // Chuẩn hóa danh sách ID cột với tiền tố "group-" để SortableContext quản lý kéo thả
-  const groupIds = groups.map((g) => `group-${g.id}`);
-
   return (
-    // Dùng rectSortingStrategy vì các cột được sắp xếp theo dạng lưới Responsive Grid (1, 2 hoặc 3 cột tùy kích thước màn hình)
-    <SortableContext items={groupIds} strategy={rectSortingStrategy}>
-      <div className="container mx-auto flex-1 w-full min-w-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5 p-3 sm:p-4 lg:p-6 items-start overflow-x-hidden">
-        {groups.map(function (group) {
-          return (
-            <GroupItem
-              key={group.id}
-              group={group}
-              tasks={group.tasks || []}
-              allGroups={groups}
-              onStatusChange={onStatusChange}
-              onAddTask={onAddTask}
-              onDeleteGroup={onDeleteGroup}
-              onDeleteTask={onDeleteTask}
-              onEditTask={onEditTask}
-              // Chỉ mở menu nếu activeMenuId trùng với id của cột này
-              isOpen={activeMenuId === group.id}
-              onToggleMenu={() => onToggleMenu?.(group.id)}
-              onCloseMenu={onCloseMenu}
-            />
-          );
-        })}
-      </div>
-    </SortableContext>
+    <div className="container mx-auto flex-1 w-full min-w-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5 p-3 sm:p-4 lg:p-6 items-start overflow-x-hidden">
+      {groups.map(function (group) {
+        return (
+          <GroupItem
+            key={group.id}
+            group={group}
+            tasks={group.tasks || []}
+            allGroups={groups}
+            onStatusChange={onStatusChange}
+            onAddTask={onAddTask}
+            onDeleteGroup={onDeleteGroup}
+            onDeleteTask={onDeleteTask}
+            onEditTask={onEditTask}
+          />
+        );
+      })}
+    </div>
   );
 }

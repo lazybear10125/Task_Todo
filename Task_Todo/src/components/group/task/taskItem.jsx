@@ -13,7 +13,7 @@ export default function TaskItem({
   // const { setNodeRef, style, dragProps } = useSortableTask(task);
 
   // Logic xử lý khi bấm nút "Change" (Sửa task):
-  // Dùng stopPropagation để ngăn sự kiện lan ra ngoài (tránh kích hoạt drag của dnd-kit)
+  // Dùng stopPropagation để ngăn sự kiện lan ra ngoài
   function handleEdit(e) {
     e.stopPropagation();
     if (!onEditTask) return;
@@ -40,7 +40,8 @@ export default function TaskItem({
       // ref={setNodeRef}
       // style={style}
       // {...dragProps}
-      className="border-0 rounded-lg px-2.5 py-3 flex flex-col gap-3 bg-[#e2ebf6] w-full min-w-0 max-w-full cursor-grab active:cursor-grabbing select-none touch-none"
+      // className thêm: "cursor-grab active:cursor-grabbing select-none touch-none"
+      className="border-0 rounded-lg px-2.5 py-3 flex flex-col gap-3 bg-[#e2ebf6] w-full min-w-0 max-w-full"
     >
       {/* Tiêu đề task và các nút hành động (Sửa / Xóa) */}
       <div className="flex flex-wrap justify-between items-start gap-2 min-w-0 w-full">

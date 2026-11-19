@@ -91,11 +91,17 @@ export function DragHandle({ className = "", ...props }) {
       className={`p-1 text-[#64748b] hover:text-[#0f172a] hover:bg-[#e2e8f0] rounded cursor-grab active:cursor-grabbing flex items-center justify-center border-0 bg-transparent touch-none select-none ${className}`}
       {...props}
     >
-      {/* <img
-        src="https://www.svgrepo.com/show/459043/drag-handle.svg"
-        alt="Drag"
-        className="w-4 h-4 pointer-events-none"
-      /> */}
+      <svg
+        className="w-4 h-4 fill-current pointer-events-none"
+        viewBox="0 0 24 24"
+      >
+        <circle cx="9" cy="6" r="1.5" />
+        <circle cx="15" cy="6" r="1.5" />
+        <circle cx="9" cy="12" r="1.5" />
+        <circle cx="15" cy="12" r="1.5" />
+        <circle cx="9" cy="18" r="1.5" />
+        <circle cx="15" cy="18" r="1.5" />
+      </svg>
     </button>
   );
 }
@@ -162,7 +168,6 @@ export const handleDndDragEnd = (event, setGroups) => {
     // Tìm nhóm đích (cột mà con trỏ đang trỏ tới hoặc chứa task được trỏ tới)
     const targetGroup = newGroups.find(
       (group) =>
-        String(group.id) === String(over.id) ||
         `group-${group.id}` === String(over.id) ||
         group.tasks.some((task) => String(task.id) === String(over.id)),
     );
@@ -240,19 +245,7 @@ export default function TodoDndContext({ children, onDragEnd }) {
     <DndContext
       sensors={sensors}
       collisionDetection={collisionDetectionStrategy}
-      onDragStart={(event) => {
-        // Ghi log khi bắt đầu kéo phần tử
-        console.log("Drag Start:", event.active.id);
-      }}
-      onDragEnd={(event) => {
-        // Ghi log và chuyển tiếp sự kiện kéo thả cho handler xử lý cập nhật state
-        console.log("Drag End:", event.active.id, event.over?.id);
-        onDragEnd(event);
-      }}
-      onDragCancel={() => {
-        // Ghi log khi thao tác kéo bị hủy bỏ (ví dụ: nhấn ESC)
-        console.log("Drag Cancel");
-      }}
+      onDragEnd={onDragEnd}
     >
       {children}
     </DndContext>

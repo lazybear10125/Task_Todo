@@ -2,7 +2,6 @@ import Header from "../../components/header";
 import GroupList from "../../components/group/groupList";
 import Modal from "../../components/modal";
 import TaskForm from "../../components/group/task/taskForm";
-import TodoDndContext from "../../dnd/TodoDndContext";
 import { useTodo } from "./useTodoLogic";
 
 export default function TodoPage() {
@@ -13,9 +12,6 @@ export default function TodoPage() {
     isModalOpen,
     selectedGroupId,
     editingTask,
-    activeMenuId,
-    handleToggleMenu,
-    handleCloseMenu,
     handleAddGroup,
     handleDeleteGroup,
     handleDeleteGroupByName,
@@ -27,7 +23,6 @@ export default function TodoPage() {
     handleUpdateTask,
     handleChangeStatus,
     handleDeleteTask,
-    handleDragEnd,
   } = useTodo();
 
   return (
@@ -41,21 +36,16 @@ export default function TodoPage() {
         onOpenAddTask={handleOpenAddModal}
       />
 
-      {/* Khu vực nội dung chính: Bọc trong TodoDndContext để hỗ trợ kéo thả các cột và thẻ task */}
+      {/* Khu vực nội dung chính: Danh sách các cột nhóm */}
       <main className="flex-1 flex overflow-y-auto overflow-x-hidden">
-        <TodoDndContext onDragEnd={handleDragEnd}>
-          <GroupList
-            groups={groups}
-            onStatusChange={handleChangeStatus}
-            onAddTask={handleOpenModal}
-            onDeleteGroup={handleDeleteGroup}
-            onDeleteTask={handleDeleteTask}
-            onEditTask={handleOpenEditModal}
-            activeMenuId={activeMenuId}
-            onToggleMenu={handleToggleMenu}
-            onCloseMenu={handleCloseMenu}
-          />
-        </TodoDndContext>
+        <GroupList
+          groups={groups}
+          onStatusChange={handleChangeStatus}
+          onAddTask={handleOpenModal}
+          onDeleteGroup={handleDeleteGroup}
+          onDeleteTask={handleDeleteTask}
+          onEditTask={handleOpenEditModal}
+        />
       </main>
 
       {/* Modal popup phục vụ cả 2 nghiệp vụ: Thêm mới task hoặc Chỉnh sửa task hiện có */}

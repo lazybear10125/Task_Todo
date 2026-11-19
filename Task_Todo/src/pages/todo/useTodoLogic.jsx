@@ -1,6 +1,5 @@
 import { useState } from "react";
 import defaultGroups from "../../constants/defaultGroups";
-import { handleDndDragEnd } from "../../dnd/TodoDndContext";
 
 const normalizeName = (name) => (name || "").trim().toLowerCase();
 
@@ -10,7 +9,6 @@ export const useTodo = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState(1);
   const [editingTask, setEditingTask] = useState(null);
-  const [activeMenuId, setActiveMenuId] = useState(null);
 
   // Logic kiểm tra trùng lặp tên nhóm: so sánh tên đã chuẩn hóa với các nhóm hiện có
   const isDuplicateGroup = (title) => {
@@ -30,20 +28,9 @@ export const useTodo = () => {
     );
   };
 
-  // Logic bật/tắt menu 3 chấm của cột: nếu click vào cột đang mở thì đóng, ngược lại thì mở cột đó
-  const handleToggleMenu = (groupId) => {
-    setActiveMenuId((prev) => (prev === groupId ? null : groupId));
-  };
-
-  // Logic đóng menu 3 chấm
-  const handleCloseMenu = () => {
-    setActiveMenuId(null);
-  };
-
   // Logic mở Modal thêm task mới cho một nhóm cụ thể:
-  // Đóng menu, xóa dữ liệu task đang edit, đặt nhóm mặc định và bật cờ isModalOpen
+  // Xóa dữ liệu task đang edit, đặt nhóm mặc định và bật cờ isModalOpen
   const handleOpenModal = (groupId) => {
-    handleCloseMenu();
     setEditingTask(null);
     setSelectedGroupId(groupId || groups[0]?.id || 1);
     setIsModalOpen(true);
@@ -56,9 +43,8 @@ export const useTodo = () => {
   };
 
   // Logic mở Modal chỉnh sửa task:
-  // Đóng menu, nạp dữ liệu task cần sửa vào editingTask, đồng bộ selectedGroupId và mở modal
+  // Nạp dữ liệu task cần sửa vào editingTask, đồng bộ selectedGroupId và mở modal
   const handleOpenEditModal = (task) => {
-    handleCloseMenu();
     setEditingTask(task);
     setSelectedGroupId(task.groupId || task.status || 1);
     setIsModalOpen(true);
@@ -84,7 +70,6 @@ export const useTodo = () => {
       groupId: targetGroupId,
       status: targetGroupId,
     };
-    console.log("Task title:", taskToAdd.title, taskToAdd);
 
     setGroups((prev) =>
       prev.map((g) =>
@@ -170,9 +155,8 @@ export const useTodo = () => {
     );
   };
 
-  // Logic xóa một nhóm theo groupId: đóng menu và loại bỏ nhóm khỏi mảng groups
+  // Logic xóa một nhóm theo groupId: loại bỏ nhóm khỏi mảng groups
   const handleDeleteGroup = (groupId) => {
-    handleCloseMenu();
     setGroups((prev) => prev.filter((g) => String(g.id) !== String(groupId)));
   };
 
@@ -221,8 +205,6 @@ export const useTodo = () => {
     setNewGroupTitle("");
   };
 
-  const handleDragEnd = (event) => handleDndDragEnd(event, setGroups);
-
   return {
     groups,
     newGroupTitle,
@@ -230,9 +212,6 @@ export const useTodo = () => {
     isModalOpen,
     selectedGroupId,
     editingTask,
-    activeMenuId,
-    handleToggleMenu,
-    handleCloseMenu,
     handleAddGroup,
     handleDeleteGroup,
     handleDeleteGroupByName,
@@ -244,7 +223,6 @@ export const useTodo = () => {
     handleUpdateTask,
     handleChangeStatus,
     handleDeleteTask,
-    handleDragEnd,
   };
 };
 
